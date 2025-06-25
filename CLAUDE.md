@@ -4,160 +4,139 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is an MCP (Model Context Protocol) learning course repository containing reference documentation and materials for understanding MCP implementation with TypeScript SDK.
+This is an MCP (Model Context Protocol) learning course repository with a three-tier educational architecture: skeleton exercises for students, complete solutions for reference, and comprehensive tests for validation.
 
-## Key Files
+## Architecture Overview
 
-- `mcp-typescript-sdk.md` - Comprehensive MCP TypeScript SDK documentation and examples
-- `llms-full.txt` - List of MCP-compatible clients and their feature support matrix
+### Three-Tier Educational Structure
 
-## 技術需求
+**exercises/** - Skeleton code with TODO comments for student implementation
+**solutions/** - Complete working implementations serving as reference answers  
+**tests/** - Test suites designed against complete implementations to validate student work
 
-### 開發環境
-- Node.js 18+
-- TypeScript 5+ 
-- Jest 測試框架
-- VS Code (建議)
+This separation ensures students learn through active implementation while having validation mechanisms and reference materials.
 
-### MCP 核心概念
-- **Resources**: 數據暴露端點 (類似 REST API 的 GET)
-- **Tools**: 有副作用的操作端點 (類似 REST API 的 POST)
-- **Prompts**: 可重用的 LLM 互動模板
-- **Completions**: 參數自動完成支援
+### MCP Server Development Pattern
 
-### 傳輸類型
-- **stdio**: 命令列工具和直接整合
-- **Streamable HTTP**: 遠端服務器與會話管理
-- **SSE** (已棄用): 舊版 HTTP+SSE 傳輸
-
-### 服務器架構模式
-- 高階 `McpServer` 類別用於標準實作
-- 低階 `Server` 類別用於自定義控制
-- 動態服務器功能 (運行時新增/移除工具)
-- 有狀態服務器的會話管理
-- 簡單用例的無狀態服務器模式
-
-## Common MCP Server Structure
-
+All exercises follow the standard MCP server pattern:
 ```typescript
-const server = new McpServer({
-  name: "server-name",
-  version: "1.0.0"
-});
-
-// Register resources, tools, and prompts
-server.registerResource(...);
-server.registerTool(...);
-server.registerPrompt(...);
-
-// Connect transport
+const server = new McpServer({ name: "server-name", version: "1.0.0" });
+server.registerTool/Resource/Prompt(...);
 const transport = new StdioServerTransport();
 await server.connect(transport);
 ```
 
-## 課程架構
+The course progresses through:
+- Basic tools (echo functionality)
+- Static resources (configuration, help data)
+- Dynamic resources (parameterized URIs)
+- Complex tools (async operations, error handling)
+- Prompt templates
+- HTTP transports
+- Production applications
 
-### 學習路徑 (10個練習)
-1. **基礎階段** (練習 1-3): Hello World → 靜態資源 → 基礎工具
-2. **進階階段** (練習 4-6): 動態資源 → 複雜工具 → 提示模板  
-3. **整合階段** (練習 7-8): 功能整合 → HTTP 傳輸
-4. **生產階段** (練習 9-10): 動態功能 → 完整應用
+## Common Development Commands
 
-### 練習特性
-- **循序漸進**: 每個練習都基於前面的功能擴展
-- **完整測試**: 包含單元測試、功能測試、性能測試
-- **實用導向**: 從簡單 echo 到生產級應用
-- **多元化**: 涵蓋 stdio、HTTP 傳輸和動態功能
-
-## 開發環境設置
-
-### 專案初始化 (目前需要)
+### Build and Development
 ```bash
-npm init -y
-npm install --save-dev typescript @types/node jest ts-jest @types/jest
-npm install @modelcontextprotocol/sdk
-npx tsc --init
+npm run build                 # Compile TypeScript
+npm run dev                   # Watch mode compilation
+npm run lint                  # Run ESLint
+npm run lint:fix              # Auto-fix lint issues
 ```
 
-### 重要建議
-⚠️ **專案狀態**: 目前僅包含規劃文檔，實際程式碼和測試需要建立
-- 先建立 package.json 和基本專案結構
-- 建立 exercises/ 和 tests/ 目錄
-- 設定 TypeScript 和 Jest 配置
-
-## 練習結構與測試
-
-### 測試命令 (規劃中)
+### Testing
 ```bash
-npm test                    # 執行所有測試
-npm run test:01            # 測試特定練習 (01)
-npm run test:cumulative:05 # 累積測試 (練習 1-5)
-npm run test:coverage      # 生成測試覆蓋率報告
-npm run test:performance   # 性能測試
-npm run dev:01             # 運行練習 01 開發模式
-npm run build              # 編譯 TypeScript
-npm run lint               # 程式碼檢查
+npm test                      # Run all tests
+npm run test:01               # Test specific exercise (01-10)
+npm run test:cumulative:05    # Test exercises 1-5 progressively
+npm run test:coverage         # Generate coverage report
+npm run test:performance      # Run performance benchmarks
 ```
 
-### 目錄結構 (規劃中)
-```
-/
-├── exercises/
-│   ├── 01-hello-world/
-│   ├── 02-static-resources/
-│   └── ...
-├── tests/
-│   ├── utils/
-│   ├── 01-hello-world/
-│   └── ...
-├── shared/
-│   └── test-utils/
-└── docs/
+### Exercise Development
+```bash
+npm run dev:01                # Run exercise 01 server
+npm run dev:02                # Run exercise 02 server
+# ... up to dev:10
 ```
 
-### 測試架構
-- **測試框架**: Jest with TypeScript
-- **MCP 測試工具**: 自定義 `McpTestClient` 和 `McpTestServer`
-- **測試層級**: 冒煙測試 → 單元測試 → 功能測試 → 整合測試
+### Manual Testing
+```bash
+# Test with MCP Inspector
+npx @modelcontextprotocol/inspector node dist/exercises/01-hello-world/server.js
 
-### 練習進展模式
-1. **累積式測試**: 每個練習都包含前面練習的所有功能測試
-2. **隔離測試**: 每個練習可獨立測試新增功能
-3. **性能驗證**: 重要功能包含性能基準測試
+# Manual JSON-RPC testing
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{...}}' | node dist/exercises/XX/server.js
+```
 
-### 開發工具
-- 使用 [MCP Inspector](https://github.com/modelcontextprotocol/inspector) 進行手動測試
-- VS Code 建議安裝 TypeScript 和 Jest 擴展
+## Development Workflow for New Exercises
 
-## 常用 MCP 工具類
-建議建立共用工具類於 `shared/` 目錄:
+1. **Create complete solution first** in `solutions/XX-name/`
+2. **Create skeleton version** in `exercises/XX-name/` with:
+   - Basic structure and imports
+   - TODO comments marking implementation points
+   - Helpful hints in comments
+   - Intentional compilation errors to guide learning
+3. **Write comprehensive tests** in `tests/XX-name/` based on complete solution
+4. **Create learning materials**:
+   - `README.md` with step-by-step implementation guide
+   - `hints.md` with code snippets and tips
 
-### McpTestClient 
-專門用於測試的 MCP 客戶端包裝器，提供:
-- 簡化的連接和斷開方法
-- 超時控制和錯誤處理
-- 批量測試工具
+## MCP Core Concepts Implementation
 
-### McpTestServer
-專門用於測試的伺服器管理工具，提供:
-- 程序生命週期管理
-- 連接狀態檢查
-- 自動重啟功能
+### Resources (GET-like operations)
+```typescript
+server.registerResource(name, uri, metadata, handler);
+// Static: fixed URI, static content
+// Dynamic: ResourceTemplate with URI parameters
+```
 
-## 效能要求
-- 單個工具呼叫: < 100ms
-- 並發處理: 支援至少 10 個同時連接
-- 記憶體使用: 正常運行 < 100MB
-- 啟動時間: < 2 秒
+### Tools (POST-like operations)  
+```typescript
+server.registerTool(name, metadata, handler);
+// Handler receives args and returns content array
+// Should include proper error handling and validation
+```
 
-## 故障排除指南
-### 常見問題
-1. **stdio 連接失敗**: 檢查程序路徑和權限
-2. **工具呼叫超時**: 增加超時設定或優化工具邏輯
-3. **測試不穩定**: 確保每個測試獨立且能重複執行
-4. **TypeScript 錯誤**: 檢查 MCP SDK 類型定義是否正確
+### Transports
+- **stdio**: Command-line integration, used in all basic exercises
+- **Streamable HTTP**: Remote servers with session management (advanced exercises)
 
-### 除錯技巧
-- 使用 MCP Inspector 檢查服務器狀態
-- 啟用詳細日誌記錄
-- 檢查 JSON-RPC 消息格式
+## Test Architecture
+
+Tests are designed assuming complete implementations and use child process spawning to test actual MCP servers via stdio. Key patterns:
+
+- **Smoke tests**: Basic startup and initialization
+- **Integration tests**: Full request/response cycles
+- **Error handling tests**: Invalid inputs and edge cases
+
+Tests expect specific server names, tool names, and response formats as defined in each exercise's requirements.
+
+## Common Issues and Solutions
+
+### TypeScript Compilation Errors in Skeleton Code
+This is intentional - compilation errors guide students to required implementations. The error messages act as learning prompts.
+
+### Test Failures on Skeleton Code
+Expected behavior - tests are designed for complete implementations. Students should use test failures to understand requirements.
+
+### Shared Test Utilities
+The `shared/test-utils/` contains MCP testing utilities but may have API compatibility issues with current SDK versions. Focus on exercise-specific tests which use direct process spawning.
+
+## Performance Requirements
+
+- Tool calls: < 100ms response time
+- Memory usage: < 100MB during normal operation  
+- Startup time: < 2 seconds
+- Concurrent connections: Support minimum 10 simultaneous connections
+
+## MCP Protocol Specifics
+
+All servers must support:
+- JSON-RPC 2.0 protocol
+- MCP protocol version "2024-11-05"
+- Standard capability negotiation
+- Proper error responses with structured error objects
+
+Response formats follow MCP specifications with content arrays containing typed objects (text, image, resource, etc.).
