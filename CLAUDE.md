@@ -6,13 +6,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is an MCP (Model Context Protocol) learning course repository with a three-tier educational architecture: skeleton exercises for students, complete solutions for reference, and comprehensive tests for validation.
 
+**📖 MCP SDK Documentation**: The complete MCP TypeScript SDK documentation is available in `mcp-typescript-sdk.md` in the root directory. This file contains all the official examples, API references, and implementation patterns you need for MCP development.
+
 ## Architecture Overview
 
 ### Three-Tier Educational Structure
 
-**exercises/** - Skeleton code with TODO comments for student implementation
-**solutions/** - Complete working implementations serving as reference answers  
-**tests/** - Test suites designed against complete implementations to validate student work
+**🎯 exercises/** - Skeleton code with TODO comments for student implementation
+- Contains intentionally incomplete code with compilation errors
+- Students fill in the TODOs to learn MCP concepts step-by-step
+- **Compilation errors and test failures are expected and normal**
+
+**✅ solutions/** - Complete working implementations serving as reference answers
+- Contains fully functional MCP servers for each exercise
+- Used as the reference implementation for tests
+- Students can compare their work against these complete solutions
+
+**🧪 tests/** - Test suites designed to validate student implementations
+- Tests run against the student's `exercises/` code to check correctness
+- Students use test failures as learning feedback to improve their implementation
+- Tests expect the same functionality as found in `solutions/`
+- **Purpose: Help students learn by providing immediate feedback on their code**
 
 This separation ensures students learn through active implementation while having validation mechanisms and reference materials.
 
@@ -96,13 +110,25 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{...}}' | node dist
 
 ## Development Workflow for New Exercises
 
+⚠️ **Important**: When developing new exercises, always start with the complete solution and work backwards to create the learning experience.
+
 1. **Create complete solution first** in `solutions/XX-name/`
+   - Refer to `mcp-typescript-sdk.md` for correct MCP patterns
+   - Ensure it follows the established MCP server pattern
+   - Test the solution thoroughly before proceeding
+
 2. **Create skeleton version** in `exercises/XX-name/` with:
    - Basic structure and imports
-   - TODO comments marking implementation points
+   - TODO comments marking implementation points  
    - Helpful hints in comments
-   - Intentional compilation errors to guide learning
+   - **Intentional compilation errors to guide learning**
+   - Empty parameter lists, missing return statements, etc.
+
 3. **Write comprehensive tests** in `tests/XX-name/` based on complete solution
+   - Tests should validate that student implementation matches solution behavior
+   - Tests serve as both validation and learning specification
+   - Include error cases to teach proper error handling
+
 4. **Create learning materials**:
    - `README.md` with step-by-step implementation guide
    - `hints.md` with code snippets and tips
@@ -140,10 +166,20 @@ Tests expect specific server names, tool names, and response formats as defined 
 ## Common Issues and Solutions
 
 ### TypeScript Compilation Errors in Skeleton Code
-This is intentional - compilation errors guide students to required implementations. The error messages act as learning prompts.
+**This is intentional and expected!** Compilation errors guide students to required implementations. The error messages act as learning prompts. Students should:
+1. Read the error messages carefully
+2. Fill in the TODO comments to resolve errors
+3. Compare with `solutions/` if stuck
 
-### Test Failures on Skeleton Code
-Expected behavior - tests are designed for complete implementations. Students should use test failures to understand requirements.
+### Test Failures on Skeleton Code  
+**This is normal learning behavior!** Tests are designed for complete implementations. Students should:
+1. Run tests to see what functionality is expected
+2. Use test failures as requirements specification
+3. Implement features until tests pass
+4. Tests are educational tools, not problems to avoid
+
+### Repository Architecture Confusion
+Remember: `exercises/` contains incomplete student code, `solutions/` contains working answers. When debugging or understanding expected behavior, always check `solutions/` first.
 
 ### Shared Test Utilities
 The `shared/test-utils/` contains MCP testing utilities but has import path issues (uses .js extensions in .ts files). Exercise-specific tests use direct child process spawning which is more reliable. Tests run with 10-second timeout and max 4 workers.
