@@ -37,8 +37,9 @@ This is an MCP (Model Context Protocol) learning course repository with a three-
 
 **🎯 exercises/** - Skeleton code with TODO comments for student implementation
 - Contains intentionally incomplete code with compilation errors
+- Uses placeholder values (e.g., `FILL_IN_SERVER_NAME`) and deliberate errors (`throw new Error('TODO: Implement...')`)
 - Students fill in the TODOs to learn MCP concepts step-by-step
-- **Compilation errors and test failures are expected and normal**
+- **Compilation errors and test failures are expected and normal** - they guide the learning process
 
 **✅ solutions/** - Complete working implementations serving as reference answers
 - Contains fully functional MCP servers for each exercise
@@ -52,6 +53,51 @@ This is an MCP (Model Context Protocol) learning course repository with a three-
 - **Purpose: Help students learn by providing immediate feedback on their code**
 
 This separation ensures students learn through active implementation while having validation mechanisms and reference materials.
+
+### Skeleton Code Design Philosophy
+
+The skeleton code in `exercises/` is deliberately designed to guide learning through error-driven development:
+
+**🎯 Placeholder Strategy**:
+- Use meaningful placeholders like `FILL_IN_SERVER_NAME` instead of empty strings
+- Throw explicit errors: `throw new Error('TODO: Implement main function')`
+- Provide complete code structure with commented-out implementations
+
+**📝 Comment-Driven Learning**:
+- Extensive TODO comments explain what needs to be implemented
+- Code examples provided in comments for reference
+- Progressive hints from basic structure to detailed implementation
+
+**🔧 Compilation-Guided Development**:
+- Skeleton code compiles successfully but fails at runtime with clear error messages
+- Students learn by resolving TODO errors step by step
+- Test failures provide immediate feedback on implementation correctness
+
+**Example skeleton pattern**:
+```typescript
+const server = new McpServer({
+  name: 'FILL_IN_SERVER_NAME', // TODO: Replace with 'actual-server-name'
+  version: 'FILL_IN_VERSION'   // TODO: Replace with '1.0.0'
+});
+
+// TODO: Register tools
+// server.registerTool('tool-name', config, handler);
+
+async function main() {
+  try {
+    // TODO: Implement server startup
+    // const transport = new StdioServerTransport();
+    // await server.connect(transport);
+    
+    throw new Error('TODO: Implement main function');
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+```
+
+This approach ensures students understand both the structure and the functionality they need to implement.
 
 ### MCP Server Development Pattern
 

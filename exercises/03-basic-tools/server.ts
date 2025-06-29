@@ -3,7 +3,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 // TODO: 導入 z 來自 zod 用於參數驗證
-// 提示：從 'zod' 導入
+// import { z } from 'zod';
 
 /**
  * 練習 3: Basic Tools MCP Server
@@ -21,8 +21,8 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 // TODO: 創建MCP服務器實例
 // 提示：使用 McpServer 類別，需要 name 和 version
 const server = new McpServer({
-  name: '', // TODO: 設定服務器名稱為 'basic-tools-server'
-  version: '' // TODO: 設定版本號為 '1.0.0'
+  name: 'FILL_IN_SERVER_NAME', // TODO: 將此替換為 'basic-tools-server'
+  version: 'FILL_IN_VERSION' // TODO: 將此替換為 '1.0.0'
 });
 
 // TODO: 註冊echo工具 (來自練習1)
@@ -79,21 +79,27 @@ const server = new McpServer({
 async function main() {
   try {
     // TODO: 創建stdio傳輸
-    // 提示：使用 StdioServerTransport
+    // const transport = new StdioServerTransport();
     
     // TODO: 連接服務器到傳輸
-    // 提示：使用 server.connect()
+    // await server.connect(transport);
     
     // TODO: 輸出啟動成功訊息
-    // 提示：使用console.error避免干擾stdio
+    // console.error('Basic Tools MCP Server started successfully');
     
+    throw new Error('TODO: Implement main function');
   } catch (error) {
     // TODO: 錯誤處理
+    console.error('Failed to start server:', error);
+    process.exit(1);
   }
 }
 
 // TODO: 啟動服務器
 // 提示：檢查是否為主模組，然後調用main()
 if (require.main === module) {
-  main();
+  main().catch(error => {
+    console.error('Server error:', error);
+    process.exit(1);
+  });
 }
