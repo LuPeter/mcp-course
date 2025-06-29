@@ -2,6 +2,7 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
 
 /**
  * 練習 1: Hello World MCP Server
@@ -23,10 +24,10 @@ server.registerTool(
   'echo',
   {
     title: 'Echo Tool',
-    description: 'Echo back the input message'
+    description: 'Echo back the input message',
+    inputSchema: { message: z.string() }
   },
-  async (args: any) => {
-    const { message } = args;
+  async ({ message }: { message: string }) => {
     if (!message) {
       throw new Error('Message parameter is required');
     }

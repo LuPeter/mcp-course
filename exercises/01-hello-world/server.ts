@@ -2,6 +2,7 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
 
 /**
  * 練習 1: Hello World MCP Server
@@ -26,8 +27,9 @@ const server = new McpServer({
 // 提示：使用 server.registerTool() 方法
 // 工具需要：
 // - 名稱: 'echo'
-// - 標題和描述
-// - 處理函數，接收參數並返回結果
+// - 配置對象包含 title, description, inputSchema
+// - inputSchema: { message: z.string() }
+// - 處理函數使用解構參數: async ({ message }) => {}
 
 // TODO: 實作主函數
 async function main() {

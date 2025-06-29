@@ -301,7 +301,7 @@ describe('Exercise 01: Hello World MCP Server', () => {
                 // 應該返回錯誤
                 expect(parsed).toHaveProperty('error');
                 expect(parsed.error).toHaveProperty('message');
-                expect(parsed.error.message).toContain('Message parameter is required');
+                expect(parsed.error.message).toContain('Invalid arguments for tool echo');
                 
                 resolve();
               }

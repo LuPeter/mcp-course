@@ -20,11 +20,34 @@ This separation ensures students learn through active implementation while havin
 
 All exercises follow the standard MCP server pattern:
 ```typescript
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
+
 const server = new McpServer({ name: "server-name", version: "1.0.0" });
-server.registerTool/Resource/Prompt(...);
+
+// Tool with inputSchema validation
+server.registerTool(
+  'tool-name',
+  {
+    title: 'Tool Title',
+    description: 'Tool description',
+    inputSchema: { param: z.string() }
+  },
+  async ({ param }) => ({
+    content: [{ type: 'text', text: `Result: ${param}` }]
+  })
+);
+
 const transport = new StdioServerTransport();
 await server.connect(transport);
 ```
+
+**Important: Parameter Handling**
+- Tool handlers receive destructured parameters directly: `async ({ param }) => {}`
+- Always define `inputSchema` with Zod for automatic validation
+- MCP SDK validates parameters before calling your handler
+- Import `z` from 'zod' for schema definition
 
 The course progresses through:
 - Basic tools (echo functionality)

@@ -175,7 +175,7 @@ describe('Exercise 01: Hello World MCP Server (Integration)', () => {
           // 收到錯誤響應
           clearTimeout(timeout);
           
-          expect(parsed.error.message).toContain('Message parameter is required');
+          expect(parsed.error.message).toContain('Invalid arguments for tool echo');
           
           done();
         }
