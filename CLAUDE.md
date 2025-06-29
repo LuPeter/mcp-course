@@ -8,6 +8,29 @@ This is an MCP (Model Context Protocol) learning course repository with a three-
 
 **📖 MCP SDK Documentation**: The complete MCP TypeScript SDK documentation is available in `mcp-typescript-sdk.md` in the root directory. This file contains all the official examples, API references, and implementation patterns you need for MCP development.
 
+## 🚨 IMPORTANT: Follow Project Guidelines
+
+**CRITICAL**: Before making any changes to this repository, you MUST read and follow these essential documentation files:
+
+1. **📋 COURSE_OUTLINE.md** - Overall course structure and learning path
+2. **🎯 MCP_EXERCISES_PLAN.md** - Detailed exercise specifications and requirements  
+3. **🏗️ PROJECT_STRUCTURE.md** - Repository organization and development workflow
+4. **📚 EXERCISE_STRUCTURE.md** - How exercises should be structured and organized
+5. **🧪 TEST_FRAMEWORK.md** - Testing standards and methodology
+
+**DO NOT**:
+- Create new exercises without following the established patterns in these documents
+- Change exercise numbering or order without checking MCP_EXERCISES_PLAN.md
+- Modify the three-tier architecture (exercises/solutions/tests) described in PROJECT_STRUCTURE.md
+- Skip the proper development workflow outlined in the documentation
+
+**ALWAYS**:
+- Check MCP_EXERCISES_PLAN.md for the correct exercise sequence and content
+- Follow the educational methodology described in PROJECT_STRUCTURE.md
+- Ensure new exercises follow the structure outlined in EXERCISE_STRUCTURE.md
+- Implement tests according to TEST_FRAMEWORK.md standards
+- Maintain consistency with the course progression in COURSE_OUTLINE.md
+
 ## Architecture Overview
 
 ### Three-Tier Educational Structure
@@ -64,8 +87,9 @@ await server.connect(transport);
 - Import `z` from 'zod' for schema definition
 
 The course progresses through:
-- Basic tools (echo functionality)
-- Static resources (configuration, help data)
+- Basic echo functionality (hello world)
+- Static resources (configuration, help data)  
+- Basic tools (calculate, text-transform, timestamp)
 - Dynamic resources (parameterized URIs)
 - Complex tools (async operations, error handling)
 - Prompt templates
@@ -114,8 +138,15 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{...}}' | node dist
 
 ⚠️ **Important**: When developing new exercises, always start with the complete solution and work backwards to create the learning experience.
 
+**📋 MUST READ FIRST**: Before creating any new exercise, carefully review:
+- **MCP_EXERCISES_PLAN.md** for the specific exercise requirements and learning objectives
+- **EXERCISE_STRUCTURE.md** for the correct file organization and naming
+- **PROJECT_STRUCTURE.md** for the development workflow
+- **TEST_FRAMEWORK.md** for testing standards
+
 1. **Create complete solution first** in `solutions/XX-name/`
    - Refer to `mcp-typescript-sdk.md` for correct MCP patterns
+   - Follow the exact specifications in MCP_EXERCISES_PLAN.md
    - Ensure it follows the established MCP server pattern
    - Test the solution thoroughly before proceeding
 
@@ -218,3 +249,25 @@ All servers must support:
 - Proper error responses with structured error objects
 
 Response formats follow MCP specifications with content arrays containing typed objects (text, image, resource, etc.).
+
+---
+
+## 📚 Documentation Compliance Reminder
+
+**CRITICAL REMINDER**: This repository has comprehensive documentation that MUST be followed for consistency and quality:
+
+### Essential Documents (READ BEFORE ANY WORK):
+1. **COURSE_OUTLINE.md** - Master course structure
+2. **MCP_EXERCISES_PLAN.md** - Detailed exercise specifications  
+3. **PROJECT_STRUCTURE.md** - Repository organization and workflow
+4. **EXERCISE_STRUCTURE.md** - Exercise file structure standards
+5. **TEST_FRAMEWORK.md** - Testing methodology and standards
+
+### Quick Reference:
+- **Exercise numbering**: Follow MCP_EXERCISES_PLAN.md exactly
+- **File structure**: Follow EXERCISE_STRUCTURE.md patterns
+- **Development workflow**: Follow PROJECT_STRUCTURE.md methodology
+- **Testing standards**: Follow TEST_FRAMEWORK.md specifications
+- **Course progression**: Follow COURSE_OUTLINE.md learning path
+
+**When in doubt, always refer to these documents first before making changes.**
