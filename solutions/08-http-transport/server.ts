@@ -8,7 +8,6 @@ import { z } from 'zod';
 import express from 'express';
 import fs from 'fs/promises';
 import path from 'path';
-import http from 'http';
 import { randomUUID } from 'crypto';
 
 /**
@@ -787,20 +786,20 @@ server.registerResource(
 ## Transport Options
 
 ### stdio Transport (Default)
-\`\`\`bash
+\\\`\\\`\\\`bash
 node dist/solutions/08-http-transport/server.js
-\`\`\`
+\\\`\\\`\\\`
 
 ### HTTP Transport
-\`\`\`bash
+\\\`\\\`\\\`bash
 node dist/solutions/08-http-transport/server.js --http
 # Server will start on http://localhost:3000
-\`\`\`
+\\\`\\\`\\\`
 
 ## Usage Examples
 
 ### Echo Tool
-\`\`\`json
+\\\`\\\`\\\`json
 {
   "jsonrpc": "2.0",
   "id": 1,
@@ -810,10 +809,10 @@ node dist/solutions/08-http-transport/server.js --http
     "arguments": { "message": "Hello World!" }
   }
 }
-\`\`\`
+\\\`\\\`\\\`
 
 ### Content Creation
-\`\`\`json
+\\\`\\\`\\\`json
 {
   "jsonrpc": "2.0",
   "id": 2,
@@ -828,10 +827,10 @@ node dist/solutions/08-http-transport/server.js --http
     }
   }
 }
-\`\`\`
+\\\`\\\`\\\`
 
 ### Resource Access
-\`\`\`json
+\\\`\\\`\\\`json
 {
   "jsonrpc": "2.0",
   "id": 3,
@@ -840,7 +839,7 @@ node dist/solutions/08-http-transport/server.js --http
     "uri": "content://article"
   }
 }
-\`\`\`
+\\\`\\\`\\\`
 
 ## Session Management
 
@@ -1438,8 +1437,8 @@ function createExpressApp(): express.Application {
   // CORS 支援
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, mcp-session-id');
     
     if (req.method === 'OPTIONS') {
       res.sendStatus(200);
@@ -1448,8 +1447,6 @@ function createExpressApp(): express.Application {
     }
   });
   
-  // MCP 端點處理會在主函數中設置
-
   // 健康檢查端點
   app.get('/health', (req, res) => {
     res.json({
@@ -1457,7 +1454,8 @@ function createExpressApp(): express.Application {
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       activeSessions: sessions.size,
-      version: '1.0.0'
+      version: '1.0.0',
+      transport: 'http'
     });
   });
   
@@ -1465,8 +1463,12 @@ function createExpressApp(): express.Application {
   app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error('Express error:', err);
     res.status(500).json({
-      error: 'Internal server error',
-      message: err.message
+      jsonrpc: '2.0',
+      error: {
+        code: -32603,
+        message: 'Internal server error'
+      },
+      id: null
     });
   });
   
@@ -1483,49 +1485,157 @@ async function main() {
     const port = parseInt(process.env.PORT || '3000');
     
     if (useHttp) {
-      // HTTP 傳輸模式
+      // HTTP 傳輸模式 - 遵循MCP SDK文檔的正確實作方式
       console.error('Starting HTTP transport server...');
       
       const app = createExpressApp();
       
-      // 會話存儲
+      // Map to store transports by session ID (根據SDK文檔)
       const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
       
-      // 更新MCP端點處理
+      // Handle POST requests for client-to-server communication (根據SDK文檔)
       app.post('/mcp', async (req, res) => {
         try {
+          // Check for existing session ID
           const sessionId = req.headers['mcp-session-id'] as string | undefined;
           let transport: StreamableHTTPServerTransport;
           
           if (sessionId && transports[sessionId]) {
-            // 重用現有transport
+            // Reuse existing transport
             transport = transports[sessionId];
-          } else {
-            // 創建新transport
+          } else if (!sessionId && isInitializeRequest(req.body)) {
+            // New initialization request
             transport = new StreamableHTTPServerTransport({
               sessionIdGenerator: () => randomUUID(),
               onsessioninitialized: (sessionId) => {
+                // Store the transport by session ID
                 transports[sessionId] = transport;
+                // Create session record
                 createSession({ name: 'http-client', version: '1.0.0' });
                 console.error(`New HTTP session created: ${sessionId}`);
               }
             });
             
-            // 清理transport
+            // Clean up transport when closed
             transport.onclose = () => {
               if (transport.sessionId) {
                 delete transports[transport.sessionId];
+                sessions.delete(transport.sessionId);
                 console.error(`HTTP session closed: ${transport.sessionId}`);
               }
             };
             
+            // Connect to the MCP server
             await server.connect(transport);
+          } else {
+            // Invalid request
+            res.status(400).json({
+              jsonrpc: '2.0',
+              error: {
+                code: -32000,
+                message: 'Bad Request: No valid session ID provided',
+              },
+              id: null,
+            });
+            return;
           }
           
+          // Handle the request
           await transport.handleRequest(req, res, req.body);
+          
+          // Update session activity
+          if (transport.sessionId) {
+            updateSessionActivity(transport.sessionId);
+          }
+          
         } catch (error) {
           console.error('MCP request error:', error);
-          res.status(500).json({ error: 'Internal server error' });
+          if (!res.headersSent) {
+            res.status(500).json({
+              jsonrpc: '2.0',
+              error: {
+                code: -32603,
+                message: 'Internal server error'
+              },
+              id: null
+            });
+          }
+        }
+      });
+      
+      // Handle GET requests for server-to-client notifications via SSE
+      app.get('/mcp', async (req, res) => {
+        try {
+          const sessionId = req.headers['mcp-session-id'] as string | undefined;
+          if (!sessionId || !transports[sessionId]) {
+            res.status(400).json({
+              jsonrpc: '2.0',
+              error: {
+                code: -32000,
+                message: 'Invalid or missing session ID'
+              },
+              id: null
+            });
+            return;
+          }
+          
+          const transport = transports[sessionId];
+          await transport.handleRequest(req, res);
+          
+          // Update session activity
+          updateSessionActivity(sessionId);
+          
+        } catch (error) {
+          console.error('MCP GET request error:', error);
+          if (!res.headersSent) {
+            res.status(500).json({
+              jsonrpc: '2.0',
+              error: {
+                code: -32603,
+                message: 'Internal server error'
+              },
+              id: null
+            });
+          }
+        }
+      });
+      
+      // Handle DELETE requests for closing sessions
+      app.delete('/mcp', async (req, res) => {
+        try {
+          const sessionId = req.headers['mcp-session-id'] as string | undefined;
+          if (!sessionId || !transports[sessionId]) {
+            res.status(400).json({
+              jsonrpc: '2.0',
+              error: {
+                code: -32000,
+                message: 'Invalid or missing session ID'
+              },
+              id: null
+            });
+            return;
+          }
+          
+          const transport = transports[sessionId];
+          await transport.handleRequest(req, res);
+          
+          // Clean up session
+          delete transports[sessionId];
+          sessions.delete(sessionId);
+          console.error(`HTTP session deleted: ${sessionId}`);
+          
+        } catch (error) {
+          console.error('MCP DELETE request error:', error);
+          if (!res.headersSent) {
+            res.status(500).json({
+              jsonrpc: '2.0',
+              error: {
+                code: -32603,
+                message: 'Internal server error'
+              },
+              id: null
+            });
+          }
         }
       });
       
@@ -1542,6 +1652,10 @@ async function main() {
       // 優雅關閉
       process.on('SIGINT', () => {
         console.error('\nShutting down HTTP server...');
+        // Clean up all transports
+        Object.values(transports).forEach(transport => {
+          transport.close();
+        });
         process.exit(0);
       });
       
