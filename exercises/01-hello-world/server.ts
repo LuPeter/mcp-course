@@ -18,7 +18,8 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 // TODO: 創建MCP服務器實例
 // 提示：使用 McpServer 類別，需要 name 和 version
 const server = new McpServer({
-  // TODO: 設定服務器名稱和版本
+  name: '', // TODO: 設定服務器名稱
+  version: '' // TODO: 設定版本號
 });
 
 // TODO: 註冊echo工具
@@ -46,3 +47,6 @@ async function main() {
 
 // TODO: 啟動服務器
 // 提示：檢查是否為主模組，然後調用main()
+if (require.main === module) {
+  main();
+}

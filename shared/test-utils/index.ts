@@ -1,8 +1,8 @@
 // Main export file for test utilities
-export * from './types.js';
-export * from './mcp-test-client.js';
-export * from './mcp-test-server.js';
-export * from './test-utils.js';
+export * from './types';
+export * from './mcp-test-client';
+export * from './mcp-test-server';
+export * from './test-utils';
 
 // Re-export commonly used utilities
 export {
@@ -12,4 +12,4 @@ export {
   sleep,
   createMockData,
   assertTestResult
-} from './test-utils.js';
+} from './test-utils';

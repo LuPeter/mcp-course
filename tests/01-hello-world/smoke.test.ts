@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import { resolve } from 'path';
 
 describe('Exercise 01: Hello World MCP Server (Smoke Test)', () => {
-  const serverPath = resolve(__dirname, '../../dist/exercises/01-hello-world/server.js');
+  const serverPath = resolve(__dirname, '../../dist/solutions/01-hello-world/server.js');
 
   it('應該能夠啟動服務器', (done) => {
     const serverProcess = spawn('node', [serverPath], {

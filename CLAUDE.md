@@ -43,6 +43,7 @@ npm run build                 # Compile TypeScript
 npm run dev                   # Watch mode compilation
 npm run lint                  # Run ESLint
 npm run lint:fix              # Auto-fix lint issues
+tsc --noEmit                  # Type check without compilation
 ```
 
 ### Testing
@@ -122,7 +123,7 @@ This is intentional - compilation errors guide students to required implementati
 Expected behavior - tests are designed for complete implementations. Students should use test failures to understand requirements.
 
 ### Shared Test Utilities
-The `shared/test-utils/` contains MCP testing utilities but may have API compatibility issues with current SDK versions. Focus on exercise-specific tests which use direct process spawning.
+The `shared/test-utils/` contains MCP testing utilities but has import path issues (uses .js extensions in .ts files). Exercise-specific tests use direct child process spawning which is more reliable. Tests run with 10-second timeout and max 4 workers.
 
 ## Performance Requirements
 
@@ -130,6 +131,15 @@ The `shared/test-utils/` contains MCP testing utilities but may have API compati
 - Memory usage: < 100MB during normal operation  
 - Startup time: < 2 seconds
 - Concurrent connections: Support minimum 10 simultaneous connections
+
+## TypeScript Configuration
+
+The project uses path mapping for clean imports:
+- `@shared/*` → `./shared/*` (test utilities)
+- `@exercises/*` → `./exercises/*` (skeleton code)
+- `@tests/*` → `./tests/*` (test suites)
+
+Compilation excludes `shared/test-utils` due to import path conflicts.
 
 ## MCP Protocol Specifics
 

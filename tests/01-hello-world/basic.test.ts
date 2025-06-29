@@ -3,7 +3,7 @@ import { resolve } from 'path';
 
 describe('Exercise 01: Hello World MCP Server', () => {
   let serverProcess: ChildProcess;
-  const serverPath = resolve(__dirname, '../../dist/exercises/01-hello-world/server.js');
+  const serverPath = resolve(__dirname, '../../dist/solutions/01-hello-world/server.js');
 
   beforeEach(() => {
     // 每個測試前啟動服務器
@@ -41,7 +41,7 @@ describe('Exercise 01: Hello World MCP Server', () => {
             
             try {
               // 解析響應（可能包含多行）
-              const lines = response.split('\\n').filter((line: string) => line.trim());
+              const lines = response.split('\n').filter((line: string) => line.trim());
               const jsonLine = lines.find((line: string) => line.startsWith('{'));
               
               if (jsonLine) {
@@ -98,7 +98,7 @@ describe('Exercise 01: Hello World MCP Server', () => {
           }
         };
 
-        serverProcess.stdin?.write(JSON.stringify(initRequest) + '\\n');
+        serverProcess.stdin?.write(JSON.stringify(initRequest) + '\n');
       });
     });
   });
@@ -127,13 +127,13 @@ describe('Exercise 01: Hello World MCP Server', () => {
               params: {}
             };
             
-            serverProcess.stdin?.write(JSON.stringify(toolsRequest) + '\\n');
+            serverProcess.stdin?.write(JSON.stringify(toolsRequest) + '\n');
           } else if (responseCount === 2 && initComplete) {
             // 工具列表響應
             clearTimeout(timeout);
             
             try {
-              const lines = response.split('\\n').filter((line: string) => line.trim());
+              const lines = response.split('\n').filter((line: string) => line.trim());
               const jsonLine = lines.find((line: string) => line.startsWith('{'));
               
               if (jsonLine) {
@@ -175,7 +175,7 @@ describe('Exercise 01: Hello World MCP Server', () => {
           }
         };
 
-        serverProcess.stdin?.write(JSON.stringify(initRequest) + '\\n');
+        serverProcess.stdin?.write(JSON.stringify(initRequest) + '\n');
       });
     });
 
@@ -207,13 +207,13 @@ describe('Exercise 01: Hello World MCP Server', () => {
               }
             };
             
-            serverProcess.stdin?.write(JSON.stringify(echoRequest) + '\\n');
+            serverProcess.stdin?.write(JSON.stringify(echoRequest) + '\n');
           } else if (responseCount === 2 && initComplete) {
             // Echo工具響應
             clearTimeout(timeout);
             
             try {
-              const lines = response.split('\\n').filter((line: string) => line.trim());
+              const lines = response.split('\n').filter((line: string) => line.trim());
               const jsonLine = lines.find((line: string) => line.startsWith('{'));
               
               if (jsonLine) {
@@ -254,7 +254,7 @@ describe('Exercise 01: Hello World MCP Server', () => {
           }
         };
 
-        serverProcess.stdin?.write(JSON.stringify(initRequest) + '\\n');
+        serverProcess.stdin?.write(JSON.stringify(initRequest) + '\n');
       });
     });
   });
@@ -286,13 +286,13 @@ describe('Exercise 01: Hello World MCP Server', () => {
               }
             };
             
-            serverProcess.stdin?.write(JSON.stringify(echoRequest) + '\\n');
+            serverProcess.stdin?.write(JSON.stringify(echoRequest) + '\n');
           } else if (responseCount === 2 && initComplete) {
             // Echo工具錯誤響應
             clearTimeout(timeout);
             
             try {
-              const lines = response.split('\\n').filter((line: string) => line.trim());
+              const lines = response.split('\n').filter((line: string) => line.trim());
               const jsonLine = lines.find((line: string) => line.startsWith('{'));
               
               if (jsonLine) {
@@ -331,7 +331,7 @@ describe('Exercise 01: Hello World MCP Server', () => {
           }
         };
 
-        serverProcess.stdin?.write(JSON.stringify(initRequest) + '\\n');
+        serverProcess.stdin?.write(JSON.stringify(initRequest) + '\n');
       });
     });
   });

@@ -2,7 +2,7 @@ import { spawn, ChildProcess } from 'child_process';
 import { resolve } from 'path';
 
 describe('Exercise 01: Hello World MCP Server (Integration)', () => {
-  const serverPath = resolve(__dirname, '../../dist/exercises/01-hello-world/server.js');
+  const serverPath = resolve(__dirname, '../../dist/solutions/01-hello-world/server.js');
   let serverProcess: ChildProcess;
 
   beforeEach(() => {
