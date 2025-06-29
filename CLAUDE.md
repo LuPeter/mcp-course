@@ -85,12 +85,14 @@ tsc --noEmit                  # Type check without compilation
 
 ### Testing
 ```bash
-npm test                      # Run all tests
-npm run test:01               # Test specific exercise (01-10)
+npm test                      # Run all tests (expect failures on incomplete exercises)
+npm run test:01               # Test specific exercise (01-10) against exercises/ code
 npm run test:cumulative:05    # Test exercises 1-5 progressively
-npm run test:coverage         # Generate coverage report
+npm run test:coverage         # Generate coverage report  
 npm run test:performance      # Run performance benchmarks
 ```
+
+**Note**: Tests run against `exercises/` code and will fail until students complete implementations. This is intended behavior for learning.
 
 ### Exercise Development
 ```bash
@@ -155,13 +157,20 @@ server.registerTool(name, metadata, handler);
 
 ## Test Architecture
 
-Tests are designed assuming complete implementations and use child process spawning to test actual MCP servers via stdio. Key patterns:
+⚠️ **Important**: Tests are designed to validate student implementations in `exercises/` and **will fail until students complete the exercises**. This is the intended learning behavior.
+
+Tests use child process spawning to test actual MCP servers via stdio against the student's `exercises/` code. Key patterns:
 
 - **Smoke tests**: Basic startup and initialization
-- **Integration tests**: Full request/response cycles
+- **Integration tests**: Full request/response cycles  
 - **Error handling tests**: Invalid inputs and edge cases
 
-Tests expect specific server names, tool names, and response formats as defined in each exercise's requirements.
+**Test Failure is Normal**: When students first run tests, they should expect failures. These failures serve as:
+1. **Requirements specification** - Tests show what functionality is expected
+2. **Learning feedback** - Failed assertions guide implementation
+3. **Progress tracking** - Passing tests indicate successful completion
+
+Tests expect specific server names, tool names, and response formats as defined in each exercise's requirements. Students should implement features in `exercises/` until all tests pass.
 
 ## Common Issues and Solutions
 

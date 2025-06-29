@@ -3,7 +3,7 @@ import { resolve } from 'path';
 
 describe('Exercise 01: Hello World MCP Server', () => {
   let serverProcess: ChildProcess;
-  const serverPath = resolve(__dirname, '../../dist/solutions/01-hello-world/server.js');
+  const serverPath = resolve(__dirname, '../../dist/exercises/01-hello-world/server.js');
 
   beforeEach(() => {
     // 每個測試前啟動服務器
