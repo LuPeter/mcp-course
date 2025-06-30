@@ -6,8 +6,15 @@ mcp-course/
 ├── exercises/                    # 所有練習
 │   ├── 01-hello-world/
 │   ├── 02-static-resources/
-│   ├── ...
-│   └── 10-complete-application/
+│   ├── 03-basic-tools/
+│   ├── 04-dynamic-resources/
+│   ├── 05-complex-tools/
+│   ├── 06-prompt-templates/
+│   ├── 07-feature-integration/
+│   ├── 08-http-transport/
+│   ├── 09-dynamic-features/
+│   ├── 10-content-management/     # 資料庫整合練習
+│   └── 11-service-communication/  # 服務間通信練習
 ├── tests/                       # 測試文件
 │   ├── utils/                   # 測試工具
 │   ├── 01-hello-world/
@@ -52,6 +59,51 @@ exercises/01-hello-world/
     ├── diagrams/               # 架構圖
     ├── data/                   # 測試數據
     └── screenshots/            # 截圖說明
+```
+
+## 特殊練習結構
+
+### 練習10: 資料庫整合練習
+```
+exercises/10-content-management/
+├── README.md                    # 主要說明文件
+├── requirements.md              # 詳細要求規範  
+├── hints.md                     # 實作提示
+├── server.ts                    # MCP服務器主檔案（待完成）
+├── database.ts                  # 資料庫操作層（待完成）
+├── schema.sql                   # SQLite資料庫結構定義
+├── data/                        # 範例與測試資料
+│   ├── sample.db               # 預設資料庫文件
+│   └── test-data.sql           # 測試資料腳本
+├── types/                       # TypeScript類型定義
+│   ├── database.ts             # 資料庫相關類型
+│   └── content.ts              # 內容管理類型
+└── examples/                    # 使用範例
+    ├── crud-operations.ts      # CRUD操作示例
+    └── resource-mapping.ts     # 資源映射示例
+```
+
+### 練習11: 服務間通信練習
+```
+exercises/11-service-communication/
+├── README.md                    # 主要說明文件
+├── requirements.md              # 詳細要求規範
+├── hints.md                     # 實作提示
+├── analysis-server.ts           # 代碼分析MCP服務（待完成）
+├── client.ts                    # MCP客戶端實作（待完成）
+├── test-files/                  # 測試用代碼檔案
+│   ├── sample.js               # JavaScript測試檔案
+│   ├── sample.ts               # TypeScript測試檔案
+│   └── sample.py               # Python測試檔案
+├── types/                       # TypeScript類型定義
+│   ├── analysis.ts             # 分析結果類型
+│   └── communication.ts        # 服務間通信類型
+├── configs/                     # 配置文件
+│   ├── analysis-server.json    # 分析服務配置
+│   └── client-config.json      # 客戶端配置
+└── examples/                    # 使用範例
+    ├── cross-service-call.ts   # 跨服務調用示例
+    └── workflow-demo.ts        # 完整工作流示例
 ```
 
 ## 文檔模板設計
@@ -400,4 +452,180 @@ console.log('Client connected:', client.isConnected());
 }
 ```
 
-這個文件結構設計如何？需要我繼續建立課程大綱和總結文檔嗎？
+## 特殊練習模板
+
+### 練習10 資料庫整合 README.md 模板
+```markdown
+# 練習10: 持久化MCP應用 - 簡易內容管理器
+
+## 概述
+本練習將前9個練習的所有知識整合，並新增SQLite資料庫整合功能，實現一個完整的內容管理系統MVP。
+
+## 先決條件
+- 完成前9個練習
+- 理解關聯式資料庫基礎概念
+- 熟悉SQL基本語法
+
+## 學習目標
+- [ ] 掌握MCP與SQLite資料庫的整合模式
+- [ ] 理解MCP Resources和Tools如何映射到資料庫操作
+- [ ] 學會設計持久化的MCP應用架構
+- [ ] 實現完整的CRUD操作流程
+
+## 技術要點
+- **資料庫整合**: SQLite + MCP SDK
+- **資料模型**: 文章、標籤、關聯關係
+- **MCP映射**: Resources對應查詢，Tools對應CRUD
+- **數據持久化**: 跨服務器重啟的狀態保持
+
+## 資料庫設計
+```sql
+-- 查看 schema.sql 了解完整結構
+CREATE TABLE articles (
+  id INTEGER PRIMARY KEY,
+  title TEXT NOT NULL,
+  content TEXT,
+  author TEXT,
+  status TEXT DEFAULT 'draft',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+## 實作要求
+
+### MCP資源映射
+- `content://articles` - 列出所有文章
+- `content://articles/{id}` - 讀取特定文章  
+- `content://tags` - 列出所有標籤
+
+### MCP工具映射
+- `article-create` - INSERT新文章到資料庫
+- `article-update` - UPDATE現有文章
+- `article-delete` - DELETE文章
+- `tag-manage` - 標籤CRUD操作
+
+### 整合要求
+- MCP提示生成的內容要能保存到資料庫
+- 資料庫操作要有適當的錯誤處理
+- 服務器重啟後數據要持久保存
+
+## 開始實作
+
+### 步驟1: 環境設置
+```bash
+cd exercises/10-content-management
+npm install sqlite3 @types/sqlite3
+```
+
+### 步驟2: 資料庫初始化
+參考 `database.ts` 檔案，實現資料庫連接和初始化。
+
+### 步驟3: MCP服務器整合
+在 `server.ts` 中整合資料庫操作與MCP功能。
+
+### 步驟4: 測試驗證
+```bash
+npm run test:10
+```
+
+## 驗收標準
+- [ ] SQLite資料庫正確初始化
+- [ ] MCP資源正確讀取資料庫數據
+- [ ] MCP工具正確執行CRUD操作
+- [ ] 資料持久化在服務器重啟後保持
+- [ ] 所有資料庫操作有適當的錯誤處理
+```
+
+### 練習11 服務間通信 README.md 模板
+```markdown
+# 練習11: 服務間通信 - 代碼分析工具整合
+
+## 概述
+學習如何讓兩個MCP服務互相通信和協作，基於練習10的內容管理器，創建一個獨立的代碼分析服務。
+
+## 先決條件
+- 完成練習10 (內容管理器)
+- 理解MCP客戶端和服務器概念
+- 熟悉進程間通信基礎
+
+## 學習目標
+- [ ] 掌握MCP服務發現和API調用模式
+- [ ] 理解分布式MCP應用的基本架構
+- [ ] 學會設計跨服務的數據流
+- [ ] 實現MCP服務間協作工作流
+
+## 技術要點
+- **服務架構**: 代碼分析服務 + 內容管理服務
+- **通信模式**: MCP Client在服務器端的使用
+- **數據流**: 分析結果自動保存到CMS
+- **服務發現**: 簡單的服務定位機制
+
+## 服務設計
+
+### 代碼分析服務
+```typescript
+// analysis-server.ts - 新的MCP服務器
+- "analysis://file/{filename}" - 讀取要分析的代碼文件
+- "results://analysis/{id}" - 讀取分析結果
+- "analyze-file" - 分析單個代碼文件
+- "generate-report" - 將分析結果轉換為報告格式
+```
+
+### 服務整合流程
+1. 用戶調用代碼分析服務的 `analyze-file` 工具
+2. 分析服務處理文件，生成報告
+3. 分析服務作為客戶端，連接到CMS服務
+4. 分析服務調用CMS的 `article-create`，保存報告
+5. 用戶可通過CMS的 `content://articles` 資源讀取報告
+
+## 實作要求
+
+### 代碼分析服務實作
+- 獨立的MCP服務器
+- 文件讀取和基本分析功能（行數、函數計數等）
+- 分析結果格式化為報告
+
+### MCP客戶端實作  
+- 在分析服務中整合MCP客戶端
+- 連接到CMS服務
+- 調用CMS的工具保存分析結果
+
+### 錯誤處理
+- 服務間通信錯誤處理
+- 服務不可用時的降級處理
+- 適當的超時和重試機制
+
+## 開始實作
+
+### 步驟1: 啟動CMS服務
+```bash
+# 終端機1: 啟動內容管理服務
+cd exercises/10-content-management
+npm run dev
+```
+
+### 步驟2: 實作分析服務
+```bash
+# 終端機2: 開發代碼分析服務
+cd exercises/11-service-communication
+# 實作 analysis-server.ts
+```
+
+### 步驟3: 實作客戶端通信
+參考 `client.ts` 檔案，實現與CMS服務的通信。
+
+### 步驟4: 端到端測試
+```bash
+npm run test:11
+```
+
+## 驗收標準
+- [ ] 代碼分析服務獨立啟動成功
+- [ ] 分析服務可以讀取和分析代碼文件
+- [ ] 分析服務可以連接到CMS服務
+- [ ] 跨服務MCP工具調用成功
+- [ ] 分析報告正確保存到CMS資料庫
+- [ ] 可以通過CMS資源讀取分析結果
+- [ ] 兩個服務可以同時運行而不衝突
+```

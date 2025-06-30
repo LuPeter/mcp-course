@@ -75,9 +75,33 @@ mcp-course/
     npm test
     ```
 
--   **執行特定練習的測試** (例如：練習 1)
+-   **執行特定練習的測試** (例如：練習 1-11)
     ```bash
-    npm run test:01
+    npm run test:01   # Hello World MCP
+    npm run test:02   # 靜態資源伺服器
+    npm run test:03   # 基礎工具伺服器
+    npm run test:04   # 動態資源系統
+    npm run test:05   # 進階工具與錯誤處理
+    npm run test:06   # 提示模板系統
+    npm run test:07   # 整合功能伺服器
+    npm run test:08   # HTTP 傳輸服務器
+    npm run test:09   # 動態服務器功能
+    npm run test:10   # 持久化MCP應用
+    npm run test:11   # 服務間通信
+    ```
+
+-   **執行累積測試** (測試前N個練習)
+    ```bash
+    npm run test:cumulative:05   # 測試練習 1-5
+    npm run test:cumulative:10   # 測試練習 1-10
+    npm run test:cumulative:11   # 測試所有練習
+    ```
+
+-   **執行特殊測試**
+    ```bash
+    npm run test:database        # 資料庫整合測試
+    npm run test:cross-service   # 跨服務通信測試
+    npm run test:performance     # 性能測試
     ```
 
 -   **執行程式碼風格檢查**
@@ -85,25 +109,35 @@ mcp-course/
     npm run lint
     ```
 
--   **啟動特定練習的開發伺服器** (例如：練習 1)
+-   **啟動特定練習的開發伺服器** (例如：練習 1-11)
     ```bash
-    npm run dev:01
+    npm run dev:01   # 開發練習 1
+    npm run dev:02   # 開發練習 2
+    # ... 依此類推到 dev:11
     ```
 
 ## 🗺️ 課程大綱
 
-本課程包含 10 個核心練習，難度循序漸進：
+本課程包含 11 個核心練習，難度循序漸進：
 
+### 🔰 基礎層 (練習 1-3)
 1.  **Hello World MCP** - 學習 MCP 基礎和 `stdio` 傳輸。
 2.  **靜態資源伺服器** - 學習 `Resources` 概念。
 3.  **基礎工具伺服器** - 學習 `Tools` 和參數驗證。
+
+### 🚀 進階層 (練習 4-6)
 4.  **動態資源系統** - 學習 `ResourceTemplate` 和參數化 URI。
 5.  **進階工具與錯誤處理** - 掌握異步操作和錯誤處理。
 6.  **提示模板系統** - 學習 `Prompts` 功能。
+
+### 🌐 企業層 (練習 7-9)
 7.  **整合功能伺服器** - 整合 Resources, Tools, 和 Prompts。
 8.  **HTTP 傳輸服務器** - 學習 `Streamable HTTP` 和會話管理。
 9.  **動態服務器功能** - 學習動態註冊功能和通知機制。
-10. **完整應用實作** - 打造一個生產級別的 MCP 應用。
+
+### 🏢 整合層 (練習 10-11)
+10. **持久化MCP應用 - 簡易內容管理器** - SQLite數據庫整合與MCP的完整結合。
+11. **服務間通信 - 代碼分析工具整合** - 學習分布式MCP應用架構和服務間協作。
 
 ## 👣 如何進行一個練習
 
@@ -116,6 +150,85 @@ mcp-course/
 5.  **尋求提示**：如果卡關了，可以查看 `exercises/01-hello-world/hints.md` 來獲得靈感。
 6.  **重複測試**：在實作過程中反覆執行 `npm run test:01`，直到所有測試都通過。
 7.  **參考解答**：完成後，可以到 `solutions/01-hello-world/server.ts` 比較你的實作和參考解答有何不同，學習最佳實踐。
+
+## 🏗️ 特殊練習說明
+
+### 練習 10: 持久化MCP應用 - 簡易內容管理器
+
+這個練習將前9個練習的所有知識整合，並新增 SQLite 資料庫整合功能：
+
+**特殊依賴安裝：**
+```bash
+cd exercises/10-content-management
+npm install sqlite3 @types/sqlite3
+```
+
+**核心學習重點：**
+- MCP 與 SQLite 資料庫的整合模式
+- MCP Resources 和 Tools 如何映射到資料庫操作
+- 數據持久化與狀態管理
+- 完整的 CRUD 操作流程
+
+**資料庫設計：**
+- `articles` 表：文章內容管理
+- `tags` 表：標籤系統
+- `article_tags` 表：文章與標籤的多對多關係
+
+### 練習 11: 服務間通信 - 代碼分析工具整合
+
+這個練習展示如何讓兩個 MCP 服務互相通信和協作：
+
+**服務架構：**
+- **代碼分析服務**：獨立的 MCP 服務器，提供文件分析功能
+- **內容管理服務**：基於練習 10 的 CMS 服務
+- **跨服務通信**：分析服務作為客戶端調用 CMS 服務
+
+**運行方式：**
+```bash
+# 終端機 1: 啟動 CMS 服務
+cd exercises/10-content-management
+npm run dev
+
+# 終端機 2: 啟動代碼分析服務
+cd exercises/11-service-communication  
+npm run dev
+```
+
+**學習重點：**
+- MCP 服務發現和 API 調用模式
+- 分布式 MCP 應用的基本架構
+- 跨服務的數據流設計
+- 服務間錯誤處理和超時管理
+
+**完整工作流：**
+1. 用戶調用代碼分析服務的 `analyze-file` 工具
+2. 分析服務處理文件，生成分析報告
+3. 分析服務作為客戶端連接到 CMS 服務
+4. 分析服務調用 CMS 的 `article-create` 工具保存報告
+5. 用戶可通過 CMS 的 `content://articles` 資源讀取分析結果
+
+## 🎯 學習成果
+
+完成全部 11 個練習後，你將具備：
+
+### 📚 核心知識
+- **MCP 協議全面掌握**：從基礎概念到高級應用
+- **完整應用開發能力**：能夠設計和實現端到端的 MCP 解決方案
+- **數據持久化整合技能**：掌握 MCP 與數據庫的整合模式
+- **分布式系統基礎**：理解 MCP 服務間通信和協作
+
+### 🛠️ 實際技能
+- 設計和實現生產級 MCP 服務器
+- 整合多種傳輸協議（stdio、HTTP）
+- 實現動態功能管理和通知機制
+- 設計跨服務的 MCP 應用架構
+- 處理複雜的異步操作和錯誤情況
+
+### 🏆 專業能力
+- 能夠將 MCP 應用到真實業務場景中
+- 具備 MCP 應用的性能優化和監控能力
+- 理解 MCP 生態系統和最佳實踐
+- 能夠參與 MCP 社群和開源貢獻
 
 ## 🤝 貢獻
 
