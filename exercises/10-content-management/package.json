@@ -1,0 +1,41 @@
+{
+  "name": "mcp-exercise-10-content-management",
+  "version": "1.0.0",
+  "description": "MCP 練習 10 - 持久化MCP應用：簡易內容管理器",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node-esm server.ts",
+    "start": "node dist/server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint *.ts",
+    "format": "prettier --write *.ts",
+    "db:reset": "rm -f data/content.db && npm run dev",
+    "db:inspect": "sqlite3 data/content.db"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "sqlite3": "^5.1.6",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/sqlite3": "^3.1.11",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "prettier": "^3.0.0"
+  },
+  "keywords": ["mcp", "content-management", "sqlite", "database", "exercise"],
+  "author": "MCP Course",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
